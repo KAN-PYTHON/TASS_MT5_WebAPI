@@ -12,7 +12,7 @@ content = session.get(link)
 content.html.render()
 content = content.text
 
-# with open('src.html', 'w') as file:
+# with open('txt\src.txt', 'w') as file:
 #     file.write(src)
 # with open("src.html", "r") as f:
 #     contents = f.read()
