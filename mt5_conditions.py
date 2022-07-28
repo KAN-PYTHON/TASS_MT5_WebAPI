@@ -1,3 +1,6 @@
+"""
+Скрипт сравнивает торговые условия двух счетов MT5
+"""
 import time
 import MetaTrader5 as MT5
 
