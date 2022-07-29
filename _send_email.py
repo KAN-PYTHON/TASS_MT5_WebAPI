@@ -1,33 +1,32 @@
 import smtplib
-import os
 from email.mime.text import MIMEText
 
 # https://www.youtube.com/watch?v=RyoTETtvoFQ&t=151s
 
-def send_email(message):
-    sender = "your_email"
-    # your password = "your password"
-    password = os.getenv("EMAIL_PASSWORD")
+# password = "d4#Y4=fh-f"
 
+
+def send_email_txt(receiver, subject, message):
+    sender = "mt5.tassfx@gmail.com"
+    password = "axyvxpilslxzvwrh"
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
-
+    server.ehlo()
     try:
         server.login(sender, password)
         msg = MIMEText(message)
-        msg["Subject"] = "CLICK ME PLEASE!"
-        server.sendmail(sender, sender, msg.as_string())
-
-        # server.sendmail(sender, sender, f"Subject: CLICK ME PLEASE!\n{message}")
-
-        return "The message was sent successfully!"
+        msg["Subject"] = subject
+        server.sendmail(sender, receiver, msg.as_string())
     except Exception as _ex:
-        return f"{_ex}\nCheck your login or password please!"
+        return _ex
+    return 0
 
 
 def main():
-    message = input("Type your message: ")
-    print(send_email(message=message))
+    receiver = 'anton.kurakin@gmail.com'
+    subject = 'Тебе письмо'
+    message = 'Привет брат!'
+    send_email_txt(receiver, subject, message)
 
 
 if __name__ == "__main__":
