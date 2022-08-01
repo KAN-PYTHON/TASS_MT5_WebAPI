@@ -1,12 +1,6 @@
-import smtplib
 import datetime
 import pymysql
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
-
-from lib import mt5_webapi_lib as MT5
-# from _config import host, user, password, db_name
 
 host = "89.108.65.107"
 user = "mt5_tass_user"
