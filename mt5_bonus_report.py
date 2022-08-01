@@ -21,11 +21,8 @@ try:
         password=password,
         database=db_name,
         cursorclass=pymysql.cursors.DictCursor)
-    print("Report start ...")
-    print("#" * 50)
-except BrokenPipeError as Ex:
-    print("Database connection error ...")
-    print("#" * 50)
+except Exception as _ex:
+    print(f"{_ex}\nCheck your login or password please!")
     quit()
 
 with connection.cursor() as cursor:
