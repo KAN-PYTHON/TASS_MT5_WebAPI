@@ -14,9 +14,9 @@ from email.mime.base import MIMEBase
 
 
 def send_email(text=None, template=None):
-    sender = "your_email"
-    # your password = "your password"
-    password = os.getenv("EMAIL_PASSWORD")
+    sender = "mt5.rport.sender@gmail.com"
+    receiver = "anton.kurakin@gmail.com"
+    password = "dbqxujnizlnjiaae"
 
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
@@ -31,7 +31,7 @@ def send_email(text=None, template=None):
         server.login(sender, password)
         msg = MIMEMultipart()
         msg["From"] = sender
-        msg["To"] = sender
+        msg["To"] = 'anton.kurakin@gmail.com'
         msg["Subject"] = "С Днем Рождения! Только сегодня скидка по промокоду до 90%!"
 
         if text:
@@ -41,31 +41,31 @@ def send_email(text=None, template=None):
             msg.attach(MIMEText(template, "html"))
 
         print("Collecting...")
-        for file in tqdm(os.listdir("attachments")):
+        for file in tqdm(os.listdir("txt")):
             time.sleep(0.4)
             filename = os.path.basename(file)
             ftype, encoding = mimetypes.guess_type(file)
             file_type, subtype = ftype.split("/")
 
             if file_type == "text":
-                with open(f"attachments/{file}") as f:
+                with open(f"txt/{file}") as f:
                     file = MIMEText(f.read())
             elif file_type == "image":
-                with open(f"attachments/{file}", "rb") as f:
+                with open(f"txt/{file}", "rb") as f:
                     file = MIMEImage(f.read(), subtype)
             elif file_type == "audio":
-                with open(f"attachments/{file}", "rb") as f:
+                with open(f"txt/{file}", "rb") as f:
                     file = MIMEAudio(f.read(), subtype)
             elif file_type == "application":
-                with open(f"attachments/{file}", "rb") as f:
+                with open(f"txt/{file}", "rb") as f:
                     file = MIMEApplication(f.read(), subtype)
             else:
-                with open(f"attachments/{file}", "rb") as f:
+                with open(f"txt/{file}", "rb") as f:
                     file = MIMEBase(file_type, subtype)
                     file.set_payload(f.read())
                     encoders.encode_base64(file)
 
-            # with open(f"attachments/{file}", "rb") as f:
+            # with open(f"txt/{file}", "rb") as f:
             #     file = MIMEBase(file_type, subtype)
             #     file.set_payload(f.read())
             #     encoders.encode_base64(file)
@@ -74,7 +74,7 @@ def send_email(text=None, template=None):
             msg.attach(file)
 
         print("Sending...")
-        server.sendmail(sender, sender, msg.as_string())
+        server.sendmail(sender, receiver, msg.as_string())
 
         return "The message was sent successfully!"
     except Exception as _ex:

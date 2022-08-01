@@ -1,0 +1,11 @@
+file.write('<html>' + '\n')
+        file.write('<head>'
+                   '<meta http-equiv="content-type" content="text/html; charset=utf-8ru">'
+                   '<style>'
+                   '.table  {width: 800px; margin-bottom: 20px; border: 1px solid #dddddd; border-collapse: collapse;}'
+                   '.table th {font-weight: bold; padding: 5px; background: #efefef; border: 1px solid #dddddd;}'
+                   '.table td {border: 1px solid #dddddd; padding: 5px;}'
+                   '</style>'
+                   '<title>Bonus report</title>'
+                   '</head>' + '\n')
+        file.write('<body style = "font-family: Courier New">' + '\n')

@@ -1,5 +1,10 @@
+import smtplib
 import datetime
 import pymysql
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+
 from lib import mt5_webapi_lib as MT5
 # from _config import host, user, password, db_name
 
@@ -37,6 +42,7 @@ with connection.cursor() as cursor:
                    '<title>Bonus report</title>'
                    '</head>' + '\n')
         file.write('<body style = "font-family: Courier New">' + '\n')
+
         file.write('<div  style="margin: 10px">' + 'Bonus report at ' + str(
             datetime.datetime.now().strftime('%Y-%m-%d %H:%M')) + '</div>' + '\n')
 
@@ -45,6 +51,12 @@ with connection.cursor() as cursor:
                     "GROUP BY Login ORDER BY Login ASC"
         cursor.execute(bonus_sum)
         bonus_sum = cursor.fetchall()
+
+        # deposit_sum = "SELECT Login, SUM(Profit) as Sum FROM `mt5_deals_2022`" \
+        #             "WHERE Action in (0, 1, 2)" \
+        #             "GROUP BY Login ORDER BY Login ASC"
+        # cursor.execute(deposit_sum)
+        # deposit_sum = cursor.fetchall()
 
         for result in bonus_sum:
             file.write('<table  class="table"' + '\n')
@@ -67,13 +79,6 @@ with connection.cursor() as cursor:
                 result.get('Sum')) + ' USD</div>' + '\n')
         file.write('</body>' + '\n')
         file.write('</html>' + '\n')
+    connection.close()
 
-    with open(file_name, 'r') as file:
-        message = file.read()
-        print(message)
-        MT5.send_email_txt('anton.kurakin@gmail.com', datetime.datetime.now().strftime('%Y-%m-%d %H.%M'), message)
-
-connection.close()
-print("#" * 50)
-print("Report finish ...")
-
+# MT5.send_report_email("anton.kurakin@gmail.com", file_name)
