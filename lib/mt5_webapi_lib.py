@@ -161,3 +161,23 @@ def send_email_txt(receiver, subject, message):
     return 0
 # Конец функции
 # # Пример: print(send_email_txt('anton.kurakin@gmail.com', 'Тебе письмо', 'Привет брат!')))
+
+
+def send_email_attachments(receiver, subject, message):
+    import smtplib
+    from email.mime.text import MIMEText
+    sender = "mt5.tassfx@gmail.com"
+    password = "axyvxpilslxzvwrh"
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.ehlo()
+    try:
+        server.login(sender, password)
+        msg = MIMEText(message)
+        msg["Subject"] = subject
+        server.sendmail(sender, receiver, msg.as_string())
+    except Exception as _ex:
+        return _ex
+    return 0
+# Конец функции
+# # Пример: print(send_email_txt('anton.kurakin@gmail.com', 'Тебе письмо', 'Привет брат!')))

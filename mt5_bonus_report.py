@@ -1,5 +1,6 @@
 import datetime
 import pymysql
+from lib import mt5_webapi_lib as MT5
 # from _config import host, user, password, db_name
 
 host = "89.108.65.107"
@@ -23,7 +24,8 @@ except BrokenPipeError as Ex:
     quit()
 
 with connection.cursor() as cursor:
-    with open('txt\\bonus_report_' + datetime.datetime.now().strftime('%Y-%m-%m %H.%M') + '.html', 'w') as file:
+    file_name = 'txt\\bonus_report_' + datetime.datetime.now().strftime('%Y-%m-%d %H.%M') + '.html'
+    with open(file_name, 'w') as file:
         file.write('<html>' + '\n')
         file.write('<head>'
                    '<meta http-equiv="content-type" content="text/html; charset=utf-8ru">'
@@ -36,7 +38,7 @@ with connection.cursor() as cursor:
                    '</head>' + '\n')
         file.write('<body style = "font-family: Courier New">' + '\n')
         file.write('<div  style="margin: 10px">' + 'Bonus report at ' + str(
-            datetime.datetime.now().strftime('%Y-%m-%m %H:%M')) + '</div>' + '\n')
+            datetime.datetime.now().strftime('%Y-%m-%d %H:%M')) + '</div>' + '\n')
 
         bonus_sum = "SELECT Login, SUM(Profit) as Sum FROM `mt5_deals_2022`" \
                     "WHERE Action NOT in (0, 1, 2)" \
@@ -65,6 +67,13 @@ with connection.cursor() as cursor:
                 result.get('Sum')) + ' USD</div>' + '\n')
         file.write('</body>' + '\n')
         file.write('</html>' + '\n')
+
+    with open(file_name, 'r') as file:
+        message = file.read()
+        print(message)
+        MT5.send_email_txt('anton.kurakin@gmail.com', datetime.datetime.now().strftime('%Y-%m-%d %H.%M'), message)
+
 connection.close()
 print("#" * 50)
 print("Report finish ...")
+
