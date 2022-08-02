@@ -1,5 +1,6 @@
 import datetime
 import pymysql
+from lib import mt5_webapi_lib as MT5
 
 
 def sql_trades(group_filter, start):
@@ -67,14 +68,13 @@ with connection.cursor() as cursor:
                    '<title>Trade report</title>'
                    '</head>' + '\n')
         file.write('<body style = "font-family: Courier New">' + '\n')
-        file.write('<div  style="margin: 10px">' + 'Trade report at ' + str(
+        file.write('<div  style="margin: 10px">' + 'Trade report from '+ start_date + ' at ' + str(
             datetime.datetime.now().strftime('%Y-%m-%d')) + '</div>' + '\n')
         file.write('<table  class="table"' + '\n')
         file.write('<tr><th>Login</th><th>Name</th><th>Swaps</th><th>Commission</th><th>Profit</th><th>Total</th>'
                    '</tr>' + '\n')
         cursor.execute(sql_trades(group_mask, start_date))
         trade_report = cursor.fetchall()
-        print(trade_report)
 
         for line in trade_report:
             file.write('<tr>' + '\n')
@@ -87,7 +87,6 @@ with connection.cursor() as cursor:
             file.write('</tr>' + '\n')
         cursor.execute(sql_trades_total(group_mask, start_date))
         line = cursor.fetchall()
-        print(line)
         file.write('<tr>' + '\n')
         file.write('<td align="center">TOTAL:</td>' + '\n')
         file.write('<td align="center"> - * -</td>' + '\n')
@@ -101,4 +100,4 @@ with connection.cursor() as cursor:
         file.write('</html>' + '\n')
 connection.close()
 
-# MT5.send_report_email("anton.kurakin@gmail.com", file_name)
+MT5.send_report_email("anton.kurakin@gmail.com", file_name)
