@@ -1,6 +1,6 @@
 import datetime
 import pymysql
-
+from lib import mt5_webapi_lib as MT5
 
 host = "89.108.65.107"
 user = "mt5_tass_user"
@@ -72,4 +72,4 @@ with connection.cursor() as cursor:
         file.write('</html>' + '\n')
     connection.close()
 
-# MT5.send_report_email("anton.kurakin@gmail.com", file_name)
+MT5.send_report_email("anton.kurakin@gmail.com", file_name)
