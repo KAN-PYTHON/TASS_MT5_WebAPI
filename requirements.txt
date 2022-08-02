@@ -6,3 +6,4 @@ beautifulsoup4~=4.11.1
 MetaTrader5~=5.0.37
 pyfiglet~=0.8.post1
 tqdm~=4.64.0
+pywhatkit~=5.4
