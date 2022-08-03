@@ -68,16 +68,17 @@ with connection.cursor() as cursor:
                    '<title>Trade report</title>'
                    '</head>' + '\n')
         file.write('<body style = "font-family: Courier New">' + '\n')
-        file.write('<div  style="margin: 10px">' + 'Trade report from '+ start_date + ' at ' + str(
+        file.write('<div  style="margin: 10px">' + 'Trade report (' + group_mask+') from ' + start_date + ' to ' + str(
             datetime.datetime.now().strftime('%Y-%m-%d')) + '</div>' + '\n')
         file.write('<table  class="table"' + '\n')
-        file.write('<tr><th>Login</th><th>Name</th><th>Swaps</th><th>Commission</th><th>Profit</th><th>Total</th>'
-                   '</tr>' + '\n')
+        file.write('<tr><th>#</th><th>Login</th><th>Name</th><th>Swaps</th><th>Commission</th><th>Profit</th>'
+                   '<th>Total</th></tr>' + '\n')
         cursor.execute(sql_trades(group_mask, start_date))
         trade_report = cursor.fetchall()
-
+        i = 1
         for line in trade_report:
             file.write('<tr>' + '\n')
+            file.write('<td align="right">' + str(i) + '</td>' + '\n')
             file.write('<td align="center">' + str(line.get('Login')) + '</td>' + '\n')
             file.write('<td align="left">' + str(line.get('Name')) + '</td>' + '\n')
             file.write('<td align="right">' + str(line.get('Swaps')) + '</td>' + '\n')
@@ -85,9 +86,11 @@ with connection.cursor() as cursor:
             file.write('<td align="right">' + str(line.get('Profit')) + '</td>' + '\n')
             file.write('<td align="right">' + str(line.get('Total')) + '</td>' + '\n')
             file.write('</tr>' + '\n')
+            i += 1
         cursor.execute(sql_trades_total(group_mask, start_date))
         line = cursor.fetchall()
         file.write('<tr>' + '\n')
+        file.write('<td align="right">' + str(i-1) + '</td>' + '\n')
         file.write('<td align="center">TOTAL:</td>' + '\n')
         file.write('<td align="center"> - * -</td>' + '\n')
         file.write('<td align="right">' + str(line[0]['Swaps']) + '</td>' + '\n')
