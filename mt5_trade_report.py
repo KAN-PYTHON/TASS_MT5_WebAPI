@@ -5,19 +5,19 @@ from lib import mt5_webapi_lib as MT5
 
 def sql_trades(group_filter, start):
     result = "SELECT " \
-                   "d.Login as Login, " \
-                   "u.FirstName as Name, " \
-                   "ROUND(SUM(d.Storage),2) as Swaps, " \
-                   "ROUND(SUM(d.Commission),2) as Commission, " \
-                   "ROUND(SUM(d.Profit),2) as Profit, " \
-                   "ROUND(SUM(d.Storage)+SUM(d.Commission)+SUM(d.Profit), 2) as Total " \
-                   "FROM mt5_deals_2022 d, mt5_users u " \
-                   "WHERE d.Action in (0, 1) and " \
-                   "d.Time > " + start + " and " \
-                   "d.Login = u.Login and " \
-                   "LOCATE('" + group_filter + "', u.Group) > 0 " \
-                                               "GROUP BY d.Login " \
-                                               "ORDER BY d.Login"
+                "d.Login as Login, " \
+                "u.FirstName as Name, " \
+                "ROUND(SUM(d.Storage),2) as Swaps, " \
+                "ROUND(SUM(d.Commission),2) as Commission, " \
+                "ROUND(SUM(d.Profit),2) as Profit, " \
+                "ROUND(SUM(d.Storage)+SUM(d.Commission)+SUM(d.Profit), 2) as Total " \
+             "FROM mt5_deals_2022 d, mt5_users u " \
+             "WHERE d.Action in (0, 1) and " \
+                "d.Time > " + start + " and " \
+                "d.Login = u.Login and " \
+                "LOCATE('" + group_filter + "', u.Group) > 0 " \
+             "GROUP BY d.Login " \
+             "ORDER BY d.Login"
     return result
 
 
@@ -27,8 +27,8 @@ def sql_trades_total(group_filter, start):
                 "ROUND(SUM(d.Commission),2) as Commission, " \
                 "ROUND(SUM(d.Profit),2) as Profit, " \
                 "ROUND(SUM(d.Storage)+SUM(d.Commission)+SUM(d.Profit), 2) as Total " \
-                "FROM mt5_deals_2022 d, mt5_users u " \
-                "WHERE d.Action in (0, 1) and " \
+             "FROM mt5_deals_2022 d, mt5_users u " \
+             "WHERE d.Action in (0, 1) and " \
                 "d.Time > " + start + " and " \
                 "d.Login = u.Login and " \
                 "LOCATE('" + group_filter + "', u.Group) > 0 "
@@ -103,4 +103,4 @@ with connection.cursor() as cursor:
         file.write('</html>' + '\n')
 connection.close()
 
-MT5.send_report_email("anton.kurakin@gmail.com", file_name)
+# MT5.send_report_email("anton.kurakin@gmail.com", file_name)
