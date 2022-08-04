@@ -68,10 +68,7 @@ start_date = datetime.datetime.now() + datetime.timedelta(days=-7)
 start_date = "'"+start_date.strftime('%Y-%m-%d')+"'"
 finish_date = datetime.datetime.now() + datetime.timedelta(days=1)
 finish_date = "'"+finish_date.strftime('%Y-%m-%d')+"'"
-
-print(start_date, finish_date)
 '''=================================================================================================================='''
-
 # Подключаемся к базе данных
 try:
     connection = pymysql.connect(
