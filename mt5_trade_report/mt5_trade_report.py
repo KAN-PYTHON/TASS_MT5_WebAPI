@@ -2,8 +2,9 @@ import datetime
 import pymysql
 
 
-def send_email(receiver, filename):
+def send_email(receiver, filename, report_name):
     import os
+    import datetime
     import smtplib
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
@@ -25,7 +26,7 @@ def send_email(receiver, filename):
         message = MIMEMultipart()
         message["From"] = sender
         message["To"] = receiver
-        message["Subject"] = "Bonus report - " + os.path.basename(filename)
+        message["Subject"] = report_name + ' ' + datetime.datetime.now().strftime('%Y-%m-%d')
         message.attach(MIMEText(file, "html"))
         attach_file = MIMEText(file)
         attach_file.add_header('content-disposition', 'attachment', filename=os.path.basename(filename))
@@ -38,7 +39,7 @@ def send_email(receiver, filename):
         return f"{ex}\nSend email error!"
 
 
-def sql_trades(group_filter, start):
+def sql_trades(group_filter, start, finish):
     result = "SELECT " \
                 "d.Login as Login, " \
                 "u.FirstName as Name, " \
@@ -50,6 +51,7 @@ def sql_trades(group_filter, start):
              "WHERE " \
                 "d.Action in (0, 1) and " \
                 "d.Time > " + start + " and " \
+                "d.Time < " + finish + " and " \
                 "d.Login = u.Login and " \
                 "LOCATE('" + group_filter + "', u.Group) > 0 " \
              "GROUP BY d.Login " \
@@ -57,7 +59,7 @@ def sql_trades(group_filter, start):
     return result
 
 
-def sql_trades_total(group_filter, start):
+def sql_trades_total(group_filter, start, finish):
     result = "SELECT " \
                 "ROUND(SUM(d.Storage),2) as Swaps, " \
                 "ROUND(SUM(d.Commission),2) as Commission, " \
@@ -67,6 +69,7 @@ def sql_trades_total(group_filter, start):
              "WHERE " \
                 "d.Action in (0, 1) and " \
                 "d.Time > " + start + " and " \
+                "d.Time < " + finish + " and " \
                 "d.Login = u.Login and " \
                 "LOCATE('" + group_filter + "', u.Group) > 0 "
     return result
@@ -77,8 +80,12 @@ host = "89.108.65.107"
 user = "mt5_tass_user"
 password = "der#18DF$=12"
 db_name = "mt5"
-group_mask = 'bbook'
-start_date = "'2022-01-01 00:00:00'"
+group_mask = ''
+report_name = 'Trade report'
+start_date = datetime.datetime.now() + datetime.timedelta(days=-1000)
+start_date = "'"+start_date.strftime('%Y-%m-%d')+"'"
+finish_date = datetime.datetime.now() + datetime.timedelta(days=1)
+finish_date = "'"+finish_date.strftime('%Y-%m-%d')+"'"
 '''=================================================================================================================='''
 # Подключаемся к базе данных
 try:
@@ -107,15 +114,15 @@ with open(file_name, 'w') as f:
             '<title>Trade report</title>'
             '</head>' + '\n')
     f.write('<body style = "font-family: Courier New">' + '\n')
-    f.write('<div  style="margin: 10px">' + 'Trade report (' + group_mask+') from ' + start_date + ' to ' + str(
-             datetime.datetime.now().strftime('%Y-%m-%d')) + '</div>' + '\n')
+    f.write('<div  style="margin: 10px">' + report_name + ' (' + group_mask + ') from ' + start_date + ' to ' +
+            finish_date + '</div>' + '\n')
     f.write('<table  class="table"' + '\n')
     f.write('<tr><th>#</th><th>Login</th><th>Name</th><th>Swaps</th><th>Commission</th><th>Profit</th>'
             '<th>Total</th></tr>' + '\n')
 
     # Получаем детальные данные из БД и формируем тело таблицы
     with connection.cursor() as cursor:
-        cursor.execute(sql_trades(group_mask, start_date))
+        cursor.execute(sql_trades(group_mask, start_date, finish_date))
         trade_report = cursor.fetchall()
 
         i = 1
@@ -132,7 +139,7 @@ with open(file_name, 'w') as f:
             i += 1
 
         # Получаем суммарные данные из БД и формируем подвал файла
-        cursor.execute(sql_trades_total(group_mask, start_date))
+        cursor.execute(sql_trades_total(group_mask, start_date, finish_date))
         line = cursor.fetchall()
         f.write('<tr>' + '\n')
         f.write('<td align="right">' + str(i-1) + '</td>' + '\n')
@@ -151,5 +158,5 @@ with open(file_name, 'w') as f:
 connection.close()
 
 # Отправляем email
-send_email("anton.kurakin@gmail.com", file_name)
+send_email("anton.kurakin@gmail.com", file_name, report_name)
 
