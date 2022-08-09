@@ -47,7 +47,7 @@ def sql_dials(group_filter, start, finish):
                  "d.Action as Action, " \
                  "d.Profit as Profit, " \
                  "d.Comment as Comment " \
-             "FROM mt5_deals_2022 d, mt5_users u " \
+             "FROM mt5_deals d, mt5_users u " \
              "WHERE " \
                  "d.Action NOT in (0, 1, 2) and " \
                  "d.Time > " + start + " and " \
@@ -58,10 +58,14 @@ def sql_dials(group_filter, start, finish):
 
 
 '''=================================================================================================================='''
-host = "89.108.65.107"
-user = "mt5_tass_user"
-password = "der#18DF$=12"
-db_name = "mt5"
+host = "127.0.0.1"
+user = "nativeuser"
+password = "Cfvsqghjcnjqxtkjdtr1!"
+db_name = "test2"
+# host = "89.108.65.107"
+# user = "mt5_tass_user"
+# password = "der#18DF$=12"
+# db_name = "mt5"
 group_mask = ''
 report_name = 'Bonus report'
 start_date = datetime.datetime.now() + datetime.timedelta(days=-7)
@@ -78,14 +82,16 @@ try:
         password=password,
         database=db_name,
         cursorclass=pymysql.cursors.DictCursor)
+
+    # Получаем данные из БД
+    with connection.cursor() as cursor:
+        cursor.execute(sql_dials(group_mask, start_date, finish_date))
+        dials = cursor.fetchall()
+
 except Exception as _ex:
     print(f"{_ex}\nCheck your login or password please!")
     quit()
 
-# Получаем данные из БД
-with connection.cursor() as cursor:
-    cursor.execute(sql_dials(group_mask, start_date, finish_date))
-    dials = cursor.fetchall()
 
 # Формируем шапку отчета
 file_name = 'trade_report_' + datetime.datetime.now().strftime('%Y-%m-%d') + '.html'
@@ -126,3 +132,4 @@ connection.close()
 
 # Отправляем email
 send_email("anton.kurakin@gmail.com", file_name, report_name)
+send_email("info@tassfx.com", file_name, report_name)
